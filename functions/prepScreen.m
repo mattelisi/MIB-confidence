@@ -20,9 +20,8 @@ Screen('Preference', 'SkipSyncTests', 0)
 Screen('Preference','SuppressAllWarnings', 1);
 
 % Open a window.  Note the new argument to OpenWindow with value 2, specifying the number of buffers to the onscreen window.
-%[scr.main,scr.rect] = Screen('OpenWindow',scr.expScreen, [0.5 0.5 0.5],[],[],2,0,2);
-%[scr.main,scr.rect] = Screen('OpenWindow',scr.expScreen, [0.5 0.5 0.5],[1000 600 1000+1000*2 600+600*2],[],2,0,2);
-[scr.main, scr.rect] = PsychImaging('OpenWindow', scr.expScreen, [0 0 0], [], 32, 2);
+%[scr.main, scr.rect] = PsychImaging('OpenWindow', scr.expScreen, [0 0 0], [], 32, 2);
+[scr.main, scr.rect] = PsychImaging('OpenWindow', scr.expScreen, [0 0 0], [0 0 1080 1080], 32, 2);
 
 % get information about  screen
 [scr.xres, scr.yres]    = Screen('WindowSize', scr.main);  % heigth and width of screen [pix]
