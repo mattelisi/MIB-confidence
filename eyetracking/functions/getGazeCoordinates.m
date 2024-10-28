@@ -35,5 +35,10 @@ function [gazeX, gazeY, isFixating] = getGazeCoordinates(eyetracker, scr, visual
     % Check if the distance is within the fixation threshold
     isFixating = distFromCenter <= fixationThreshold;
     
+    % should we refraint to penalise blinks??
+    if isnan(isFixating)
+        isFixating = true;
+    end
+    
     % Return the gaze coordinates and fixation status
 end

@@ -6,7 +6,7 @@ screen_pixels = [scr.xres scr.yres];
 dotSizePix = 30;
 HideCursor;
 
-childfriendly = 1;
+childfriendly = 0;
 
 %% prepare childfriendly calib if required
 count_i = 0;

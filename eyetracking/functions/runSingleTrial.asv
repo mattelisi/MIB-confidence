@@ -125,7 +125,7 @@ if fix_ok
 else
     angle_chosen = NaN;
 end
-
+    
 %% store data
 trial_mat = [td.off_onset, angle_correct, angle_chosen, choice, acc, tResp_1, conf_rating, tResp_2, T(1,:)/visual.ppc, T(2,:)/visual.ppc];
 rea_format = strcat(repmat('%.4f\t', 1,size(trial_mat,2)-1), '%.4f\n');
@@ -134,7 +134,7 @@ data1 = sprintf(rea_format, trial_mat);
 %% save eyetracking data
 %stimulus_string = sprintf('%s\t%s\t%s',trial_gender{t},  trial_actor{t}, trial_emotion{t});
 % time_dim_onset, time_dim_offset, time_MIB_onset, time_MIB_offset timestamp_resp timestamp_conf
-trial_string = sprintf('%i\t%i\t%s', b,t,data1);
+trial_string = sprintf('%i%s', b,t,data1);
 timestamp_seq = [time_MIB_onset, time_dim_onset, time_dim_offset, time_MIB_offset, timestamp_resp, timestamp_conf];
 savegazedata_tobii(collected_gaze_data, eyeFid, subjectID, trial_string, scr, fix_ok, timestamp_seq);
 

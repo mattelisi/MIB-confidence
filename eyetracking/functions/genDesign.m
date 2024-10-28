@@ -2,6 +2,10 @@ function design = genDesign(sess, sub_n, vpcode)
 % Set experiment details - MIB\confidence task
 % Matteo Lisi
 
+
+design.ID_n = sub_n;
+design.ID = vpcode;
+
 %% practice?
 if sess==1
     design.practice.n_trials = 5;

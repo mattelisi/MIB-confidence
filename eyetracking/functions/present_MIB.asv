@@ -1,4 +1,4 @@
-function [stim_details, fix_ok, time_dim_onset, time_dim_offset, time_MIB_onset, time_MIB_offset] = present_MIB(scr, visual, design, td, eyetracker)
+function [stim_details, fix_ok] = present_MIB(scr, visual, design, td, eyetracker)
 
 HideCursor;
 SetMouse(scr.xres, scr.yres, scr.main);
@@ -74,12 +74,8 @@ t0 =GetSecs;
 % parameters for fixation controls
 fix_ok = true;
 
-% other/timing
-first_flip = 0;
-time_dim_onset = NaN;
-time_dim_offset = NaN;
-time_MIB_onset = NaN;
-time_MIB_offset = NaN;
+% timestamp
+
 
 while (GetSecs-t0) < 10 && fix_ok
     
@@ -123,19 +119,10 @@ while (GetSecs-t0) < 10 && fix_ok
     % Flip to the screen
     Screen('Flip', scr.main);
     
-    % keep track of timestamps on tobii system
-    if first_flip==0
-        first_flip = 1;
-        time_MIB_onset = Tobii.get_system_time_stamp;
-    end
-    if dim_count==1
-        time_dim_onset = Tobii.get_system_time_stamp;
-    elseif dim_count == frame_dim
-        time_dim_offset = Tobii.get_system_time_stamp;
-    end
+    t_onset = Tobii.get_system_time_stamp;
     
     % Check fixation
-    % [gazeX, gazeY, fix_ok] = getGazeCoordinates(eyetracker, scr, visual, fix_center, scr.fixationThreshold);
+    %[gazeX, gazeY, fix_ok] = getGazeCoordinates(eyetracker, scr, visual, fix_center, scr.fixationThreshold);
     [~, ~, fix_ok] = getGazeCoordinates(eyetracker, scr, visual, fix_center, scr.fixationThreshold);
     
     % Increment the angle of the dots by one degree per frame
@@ -166,8 +153,6 @@ end
 
 Screen('FillRect', scr.main,visual.bgColor);
 Screen('Flip', scr.main);
-
-time_MIB_offset = Tobii.get_system_time_stamp;
 
 %% compile output
 stim_details.target_angle = target_angle;

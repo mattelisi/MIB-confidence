@@ -119,9 +119,8 @@ end
 %% experimental blocks
 acc_session = [];
 
-% limit repetitions?
-max_number_repeated = 20;
-added_trials = 0;
+% 
+max_number_repeated = ;
 
 for b = 1:design.nBlocks
     
@@ -156,13 +155,6 @@ for b = 1:design.nBlocks
             DrawFormattedText(scr.main, gazefeedback, 'center', 'center', visual.fgColor);
             Screen('Flip', scr.main);
             WaitSecs(1.5);
-            
-            % add trial
-            if added_trials < max_number_repeated
-                design.b(b).trial(ntt +1) = td;
-                ntt = ntt+1;
-                added_trials = added_trials+1;
-            end
         end
 
         % print data to string
