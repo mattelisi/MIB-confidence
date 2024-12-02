@@ -18,6 +18,7 @@ HideCursor;
 
 childfriendly = 0;
 
+
 %% prepare childfriendly calib if required
 count_i = 0;
 if childfriendly
@@ -59,7 +60,7 @@ while ~KbCheck
     if ~isempty(gaze_data)
         last_gaze = gaze_data(end);
 
-        validityColor = [1 0 0];
+        validityColor = [1 0 0]*255;
 
         % Check if user has both eyes inside a reasonable tacking area.
         if last_gaze.LeftEye.GazeOrigin.Validity.('value') && last_gaze.RightEye.GazeOrigin.Validity.('value')
@@ -68,7 +69,7 @@ while ~KbCheck
             right_validity = all(last_gaze.RightEye.GazeOrigin.InTrackBoxCoordinateSystem(1:2) < 0.85) ...
                                  && all(last_gaze.RightEye.GazeOrigin.InTrackBoxCoordinateSystem(1:2) > 0.15);
             if left_validity && right_validity
-                validityColor = [0 1 0];
+                validityColor = [0 1 0]*255;
             end
         end
 
@@ -77,7 +78,7 @@ while ~KbCheck
 
         penWidthPixels = 3;
         baseRect = [0 0 size(1) size(2)];
-        frame = CenterRectOnPointd(baseRect, scr.xres/2, scr.yCenter);
+        frame = CenterRectOnPointd(baseRect, scr.xres/2, scr.centerY);
 
         Screen('FrameRect', scr.main, validityColor, frame, penWidthPixels);
 
@@ -118,24 +119,32 @@ eyetracker.stop_gaze_data();
 spaceKey = KbName('Space');
 RKey = KbName('R');
 
-dotColor = [[1 0 0];[1 1 1]]; % Red and white
+dotColor = [[1 0 0];[1 1 1]]*255; % Red and white
 
-leftColor = [1 0 0]; % Red
-rightColor = [0 0 1]; % Bluesss
+leftColor = [1 0 0]*255; % Red
+rightColor = [0 0 1]*255; % Bluesss
 
 % Calibration points
-lb = 0.1;  % left bound
+shrink_factor = 0.0125;
+lb = 0.1 + shrink_factor;  % left bound
 xc = 0.5;  % horizontal center
-rb = 0.9;  % right bound
-ub = 0.1;  % upper bound
+rb = 0.9 - shrink_factor;  % right bound
+ub = 0.1 + shrink_factor;  % upper bound
 yc = 0.5;  % vertical center
-bb = 0.9;  % bottom bound
+bb = 0.9 - shrink_factor;  % bottom bound
 
 points_to_calibrate = [[lb,ub];[rb,ub];[xc,yc];[lb,bb];[rb,bb];[xc,bb];[xc,ub];[lb,yc];[rb,yc]];
-points_to_calibrate = points_to_calibrate(randperm(size(points_to_calibrate,1)),:);
+% points_to_calibrate = points_to_calibrate(randperm(size(points_to_calibrate,1)),:);
+points_to_calibrate = points_to_calibrate(randperm(9),:);
 
 % Create calibration object
 calib = ScreenBasedCalibration(eyetracker);
+
+Screen('FillOval', scr.main, dotColor(1,:), CenterRectOnPoint([0,0, dotSizePix, dotSizePix]*2, 0.5*screen_pixels(1), 0.5*screen_pixels(2)));
+Screen('FillOval', scr.main, dotColor(2,:), CenterRectOnPoint([0,0, dotSizePix, dotSizePix]*0.3, 0.5*screen_pixels(1), 0.5*screen_pixels(2)));
+DrawFormattedText(scr.main, 'Focus your gaze on the small white dot within the red disk, and follow as it jumps to different locations. \n Press any key to begin.', 'center', scr.yres * 0.65, scr.white);
+Screen('Flip', scr.main);
+SitNWait;
 
 calibrating = true;
 

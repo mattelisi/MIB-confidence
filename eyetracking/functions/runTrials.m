@@ -47,7 +47,10 @@ end
 eyetracker = calibrate_Tobii(scr, eyetracker);
 
 % assess fixation stability
-assessStability(scr, eyetracker, SJ.id);
+% assessStability(scr, eyetracker, datFile);
+
+% start 
+eyetracker.get_gaze_data();
 
 % inizialize data file
 
@@ -55,8 +58,7 @@ assessStability(scr, eyetracker, SJ.id);
 gazeDir = 'gazedata/';
 eyeFid = fopen([gazeDir datFile '_gaze'], 'w');
 
-%%%% THIS NEEDs CHECKING (if you want colnames)
-% fprintf(eyeFid, 'device_time_stamp\tsystem_time_stamp\tL_valid\tL_x\tL_y\tR_valid\tR_x\tR_y\tpupil_L_valid\tpupil_L_diameter\tpupil_R_valid\tpupil_R_diameter\tevents\tID\tblock\ttrial_n\tdim_onset\tangle_correct\tangle_chosen\tchoice\tacc\ttResp_1\tconf_rating\ttResp_2\tx1\tx2\tx3\ty1\ty2\ty3\n');
+fprintf(eyeFid, 'ID0\tdevice_time_stamp\tsystem_time_stamp\tL_valid\tL_x\tL_y\tR_valid\tR_x\tR_y\tpupil_L_valid\tpupil_L_diameter\tpupil_R_valid\tpupil_R_diameter\tevents\tfix_ok\tblock\ttrial_n\tdim_onset\tangle_correct\tangle_chosen\tchoice\tacc\ttResp_1\tconf_rating\ttResp_2\tx1\tx2\tx3\ty1\ty2\ty3\n');
 
 
 %% practice?
@@ -67,7 +69,9 @@ DrawFormattedText(scr.main, 'Press a key to start.', 'center', round(1/2 * scr.y
 Screen('Flip', scr.main);
 SitNWait;
 
-txtmsg = ['Do you want to run a quick practice (y/n)?'];
+% Screen('TextSize', scr.main, round(visual.ppc*0.3));
+
+txtmsg = ['Do you want to run a quick familiarization trial (y/n)?'];
 Screen('FillRect', scr.main, visual.bgColor);
 DrawFormattedText(scr.main, txtmsg, 'center', 'center', visual.fgColor);
 Screen('Flip', scr.main);
@@ -93,12 +97,12 @@ while do_practice
           % random determination of side, condition, etc.
           td = design.b(1).trial(1);
           td.off_onset = rand(1)*8 + 1;
-          runSingleTrial(td, scr, visual, design);
+          runSingleTrial(td, scr, visual, design, eyetracker, 0, 0, Tobii, eyeFid);
         
     end
     visual.col_dots = [0, 0, 255];
     
-    txtmsg = ['Practice trials completed.\n\n Continue to main experiment (y) or repeat practice (r)?'];
+    txtmsg = ['Practice trial completed.\n\n Continue to main experiment (y) or repeat practice (r)?'];
     Screen('FillRect', scr.main, visual.bgColor);
     DrawFormattedText(scr.main, txtmsg, 'center', 'center', visual.fgColor);
     Screen('Flip', scr.main);
@@ -120,7 +124,7 @@ end
 acc_session = [];
 
 % limit repetitions?
-max_number_repeated = 20;
+max_number_repeated = 10;
 added_trials = 0;
 
 for b = 1:design.nBlocks
@@ -144,7 +148,7 @@ for b = 1:design.nBlocks
         td = design.b(b).trial(t);
         
         % run single trial
-        [data, acc, fix_ok] = runSingleTrial(td, scr, visual, design, eyetracker, t, b);
+        [data, acc, fix_ok] = runSingleTrial(td, scr, visual, design, eyetracker, t, b, Tobii, eyeFid);
         acc_session = [acc_session, acc];
         
         % add here code to increase ntt up to a certain number (and add the current td to design.b(b).trial(t)) if fixation was broken
@@ -176,10 +180,12 @@ for b = 1:design.nBlocks
 end
 
 %% save data and say goodbye
+eyetracker.stop_gaze_data();
 fclose(datFid); % close datFile
+fclose(eyeFid); 
 Screen('FillRect', scr.main,visual.bgColor);
 Screen(scr.main,'DrawText','Thanks! This session has finished.',100,100,visual.fgColor);
-Screen(scr.main,'DrawText',['You correctly identified the target that blinked ',num2str(sum(acc_session)),' times, out of ',num2str(length(acc_session)),' trials.'],100,200,visual.fgColor);
+Screen(scr.main,'DrawText',['You correctly identified the target that blinked ',num2str(sum(acc_session, 'omitnan')),' times, out of ',num2str(length(acc_session)),' trials.'],100,200,visual.fgColor);
 Screen(scr.main,'DrawText','Press any key to exit.',100,300,visual.fgColor);
 Screen(scr.main,'Flip');
 WaitSecs(1);

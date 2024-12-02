@@ -73,7 +73,7 @@ save(sprintf('./%s/%s.mat',resdir,vpcode),'design','visual','scr');
 session_info.prop_contrast_decrement = design.prop_contrast_decrement;
 session_info.session_n = ses_n;
 session_info.id =vpcode;
-session_info.acc =mean(acc_session);
+session_info.acc =mean(acc_session, 'omitnan');
 session_info.N = length(acc_session);
 save(sprintf('./%s/%s_info.mat',resdir,vpcode),'session_info');
 

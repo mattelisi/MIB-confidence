@@ -1,4 +1,4 @@
-function [data1, acc, fix_ok] = runSingleTrial(td, scr, visual, design, eyetracker, t, b)
+function [data1, acc, fix_ok] = runSingleTrial(td, scr, visual, design, eyetracker, t, b, Tobii, eyeFid)
 % function that run individual trials
 
 HideCursor;
@@ -12,8 +12,14 @@ time_MIB_offset = NaN;
 timestamp_resp = NaN;
 timestamp_conf = NaN;
 
+% preallocate other stuff
+choice = NaN;
+tResp_1 = NaN;
+conf_rating = NaN;
+tResp_2 = NaN;
+
 %% start eyetracker recording
-eyetracker.get_gaze_data();
+% eyetracker.get_gaze_data();
 
 dots_bg_xy = [(rand(1, round(visual.dots_bg_n)).*scr.xres); (rand(1, round(visual.dots_bg_n)).*scr.yres)] - [scr.centerX;scr.centerY];
 Screen('DrawDots', scr.main, dots_bg_xy, visual.dotSizePixels, visual.col_dots, [scr.centerX;scr.centerY]', 2);
@@ -27,7 +33,7 @@ Screen('Flip', scr.main);
 WaitSecs(0.1);
 
 %% stimuli
-[S, fix_ok, time_dim_onset, time_dim_offset, time_MIB_onset, time_MIB_offset] = present_MIB(scr, visual, design, td, eyetracker);
+[S, fix_ok, time_dim_onset, time_dim_offset, time_MIB_onset, time_MIB_offset] = present_MIB(scr, visual, design, td, eyetracker, Tobii);
 
 %% response
 if fix_ok
@@ -69,14 +75,15 @@ if fix_ok
     end
     
     %% now measure confidence
+    Screen('TextSize', scr.main, round(visual.ppc*0.8));
     Screen('DrawLine', scr.main, [80, 80, 80], visual.confH0, visual.confV, visual.confH1, visual.confV, round(visual.ppc*0.05))
-    DrawFormattedText(scr.main, 'Unsure              (it could be any of the 3 targets, the  choice was random)', visual.confH0 - 8*round(visual.ppc*0.3), visual.confV+ round(visual.ppc*0.3), [200 200 200],21);
-    DrawFormattedText(scr.main, 'Certain              (I am 100% sure to  have selected the   target that blinked)', visual.confH1 + round(visual.ppc*0.3), visual.confV+ round(visual.ppc*0.3), [200 200 200],21);
+    DrawFormattedText(scr.main, 'Unsure              (it could be any of the 3 targets, the  choice was random)', visual.confH0 - 7.5*round(visual.ppc*0.8), visual.confV+ round(visual.ppc*0.8), [200 200 200],21);
+    DrawFormattedText(scr.main, 'Certain              (I am 100% sure to  have selected the   target that blinked)', visual.confH1 + round(visual.ppc*0.8), visual.confV+ round(visual.ppc*0.8), [200 200 200],21);
     
     tFlip = Screen('Flip', scr.main);
     WaitSecs(0.3);
     SetMouse(scr.centerX, scr.centerY, scr.main);
-    Screen('TextSize', scr.main, round(visual.ppc*0.3));
+    % Screen('TextSize', scr.main, round(visual.ppc*0.3));
     while 1
         
         [mx, ~, buttons] = GetMouse(scr.main);
@@ -87,8 +94,8 @@ if fix_ok
         if cur_x > visual.confH1; cur_x = visual.confH1; end
         
         Screen('DrawLine', scr.main, [80, 80, 80], visual.confH0, visual.confV, visual.confH1, visual.confV, round(visual.ppc*0.05));
-        DrawFormattedText(scr.main, 'Unsure              (it could be any of the 3 targets, the  choice was random)', visual.confH0 - 8*round(visual.ppc*0.3), visual.confV+ round(visual.ppc*0.3), [200 200 200],21);
-        DrawFormattedText(scr.main, 'Certain              (I am 100% sure to  have selected the   target that blinked)', visual.confH1+ round(visual.ppc*0.3), visual.confV+ round(visual.ppc*0.3), [200 200 200],21);
+        DrawFormattedText(scr.main, 'Unsure              (it could be any of the 3 targets, the  choice was random)', visual.confH0 - 7.5*round(visual.ppc*0.8), visual.confV+ round(visual.ppc*0.8), [200 200 200],21);
+        DrawFormattedText(scr.main, 'Certain              (I am 100% sure to  have selected the   target that blinked)', visual.confH1+ round(visual.ppc*0.8), visual.confV+ round(visual.ppc*0.8), [200 200 200],21);
         
         Screen('DrawDots', scr.main, [cur_x visual.confV], visual.target_size, [200 200 200], [], 1);
         
@@ -110,9 +117,12 @@ else
     acc=NaN;
 end
 
+% reset text size
+Screen('TextSize', scr.main, visual.textSize);
+
 %% stop eyetracker recording & get eyetracking data
 collected_gaze_data = eyetracker.get_gaze_data();
-eyetracker.stop_gaze_data();
+% eyetracker.stop_gaze_data();
 
 %% compute the angles of targets
 T = S.target_loc;
@@ -136,6 +146,6 @@ data1 = sprintf(rea_format, trial_mat);
 % time_dim_onset, time_dim_offset, time_MIB_onset, time_MIB_offset timestamp_resp timestamp_conf
 trial_string = sprintf('%i\t%i\t%s', b,t,data1);
 timestamp_seq = [time_MIB_onset, time_dim_onset, time_dim_offset, time_MIB_offset, timestamp_resp, timestamp_conf];
-savegazedata_tobii(collected_gaze_data, eyeFid, subjectID, trial_string, scr, fix_ok, timestamp_seq);
+savegazedata_tobii(collected_gaze_data, eyeFid, design.ID, trial_string, scr, fix_ok, timestamp_seq);
 
 

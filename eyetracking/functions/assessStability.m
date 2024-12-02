@@ -6,6 +6,9 @@ screen_pixels = [scr.xres scr.yres];
 dotSizePix = 30;
 HideCursor;
 
+% legacy
+subjectID = id;
+
 childfriendly = 0;
 
 %% prepare childfriendly calib if required
@@ -29,10 +32,10 @@ if childfriendly
 end
 
 %% here do actual drawing of calibration stimulus
-dotColor = [[1 0 0];[1 1 1]]; % Red and white
+dotColor = [[1 0 0];[1 1 1]]*255; % Red and white
 
-leftColor = [1 0 0]; % Red
-rightColor = [0 0 1]; % Bluesss
+leftColor = [1 0 0]*255; % Red
+rightColor = [0 0 1]*255; % Bluesss
 
 % Calibration points
 lb = 0.1;  % left bound
@@ -78,9 +81,9 @@ for i=1:length(points_to_calibrate)
     
     % store gazedata
     collected_gaze_data = eyetracker.get_gaze_data();
-    eyetracker.stop_gaze_data();
+    % eyetracker.stop_gaze_data();
     stimulus_string = sprintf('%.2f\t%.2f',XY_target(1),XY_target(2));
-    savegazedata_tobii(collected_gaze_data, eyeFid, subjectID, stimulus_string, scr);
+    savegazedata_tobii(collected_gaze_data, eyeFid, subjectID, stimulus_string, scr, 1, [0 0 0 0 0 0]);
     
     Screen('Flip', scr.main);
     XY_target = [scr.xres*points_to_calibrate(i,1), scr.yres*points_to_calibrate(i,2)];
@@ -91,6 +94,7 @@ for i=1:length(points_to_calibrate)
     
 end
 
+eyetracker.stop_gaze_data();
 fclose(eyeFid);
 
 Screen('TextSize', scr.main, 20);

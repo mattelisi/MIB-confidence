@@ -19,13 +19,13 @@ Screen('Flip', scr.main);
 visual.col_dots = [0, 0, 200];
 
 % "Sphere" height, width (radius) in cm
-visual.sphSize = 8;
+visual.sphSize = 9.6;
 
 % This is the number of dots in the sphere
 visual.numDots = 500;
 
 % blue dot size
-visual.dotSizePixels = round(0.15 * visual.ppc);
+visual.dotSizePixels = round(0.18 * visual.ppc);
 
 % N dots outside sphere
 visual.dots_bg_n = round(visual.numDots * 0.7);
@@ -39,7 +39,7 @@ visual.dots_bg_n = round(visual.numDots * 0.7);
 % 1 = the dots disappear completely
 visual.prop_contrast_decrement = design.prop_contrast_decrement;
 
-visual.target_size = round( 0.25 * visual.ppc);
+visual.target_size = round( 0.3 * visual.ppc);
 visual.target_color = [255, 255, 0];
 visual.target_dim_color = [255, 255, 0, 1-visual.prop_contrast_decrement];
 visual.target_diff_size = visual.target_size;
@@ -50,13 +50,13 @@ visual.target_loc = [cosd(30).*[1,-1].*visual.target_ecc.*visual.ppc, 0; ...
                      sind(30).*[1,+1].*visual.target_ecc.*visual.ppc, 0-visual.target_ecc.*visual.ppc];
 
 %% response display
-conf_X = round(5* visual.ppc);
+conf_X = round(10* visual.ppc);
 visual.confH0 = round(scr.centerX - conf_X/2);
 visual.confH1 = round(scr.centerX + conf_X/2);
 visual.confV = round(scr.centerY);
                  
 %%
-visual.textSize = round(visual.ppc*0.3);
+visual.textSize = round(visual.ppc*1);
 
 %% set priority of window activities to maximum
 priorityLevel=MaxPriority(scr.main);

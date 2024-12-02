@@ -1,4 +1,4 @@
-function [stim_details, fix_ok, time_dim_onset, time_dim_offset, time_MIB_onset, time_MIB_offset] = present_MIB(scr, visual, design, td, eyetracker)
+function [stim_details, fix_ok, time_dim_onset, time_dim_offset, time_MIB_onset, time_MIB_offset] = present_MIB(scr, visual, design, td, eyetracker, Tobii)
 
 HideCursor;
 SetMouse(scr.xres, scr.yres, scr.main);
@@ -62,7 +62,7 @@ dim_sequence = [linspace(1, 1-visual.prop_contrast_decrement, frame_dim+1), ...
 dim_sequence = dim_sequence(2:end)*255;
 
 % randomly pick choose one of the three targets
-off_remo = mnrnd(1,[1/3, 1/3, 1/3]);
+off_remo = custom_mnrnd([1/3, 1/3, 1/3]);
 off_keep = off_remo==0;
 off_remo = logical(off_remo);
 
@@ -72,7 +72,10 @@ r_i = 0;
 t0 =GetSecs;
 
 % parameters for fixation controls
-fix_ok = true;
+fix_ok = 1;
+n_consecutive = 6; %  100/(1/60*1000)
+fix_counter = 0;
+
 
 % other/timing
 first_flip = 0;
@@ -81,7 +84,7 @@ time_dim_offset = NaN;
 time_MIB_onset = NaN;
 time_MIB_offset = NaN;
 
-while (GetSecs-t0) < 10 && fix_ok
+while (GetSecs-t0) < 10 && fix_ok==1
     
     % Calculate the X screen position of the dots (note we have to convert
     % from degrees to radians here.
@@ -135,9 +138,22 @@ while (GetSecs-t0) < 10 && fix_ok
     end
     
     % Check fixation
-    % [gazeX, gazeY, fix_ok] = getGazeCoordinates(eyetracker, scr, visual, fix_center, scr.fixationThreshold);
-    [~, ~, fix_ok] = getGazeCoordinates(eyetracker, scr, visual, fix_center, scr.fixationThreshold);
+    %[gazeX, gazeY, fix_ok] = getGazeCoordinates(eyetracker, scr, visual, fix_center, scr.fixationThreshold);
+    [~, ~, fix_ok_i] = getGazeCoordinates(eyetracker, scr, visual, fix_center, scr.fixationThreshold);
     
+    if ~fix_ok_i 
+        fix_counter = fix_counter+1;
+    else
+        fix_counter = 0;
+    end
+    
+    if fix_counter > n_consecutive
+        fix_ok = 0;
+    end
+
+    %fprintf('gaze(x,y): %i, %i; fix target: %i, %i; fix criterion: %i\n', round(gazeX), round(gazeY), round(fix_center), fix_ok); %DEBUG
+    %fix_ok = true; %DEBUG
+
     % Increment the angle of the dots by one degree per frame
     angles = angles + sign_2*rotation_speed;
     

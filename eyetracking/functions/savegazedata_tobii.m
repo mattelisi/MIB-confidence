@@ -19,6 +19,7 @@ for i=1:length(GazeData)
     
     %Check if data was collected for each eye
     if length(thisPoint.LeftEye.GazePoint.OnDisplayArea)==2
+        % latestGazeData.LeftEye.GazePoint.OnDisplayArea
         Lx = round(thisPoint.LeftEye.GazePoint.OnDisplayArea(1)*scr.xres);
         Ly = round(thisPoint.LeftEye.GazePoint.OnDisplayArea(2)*scr.yres);
     else
@@ -57,5 +58,6 @@ end
 % now write to text file
 [rows,~]=size(gazeCell);
 for i=1:rows
-      fprintf(fid,'%s\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%d\t%.2f\t%d\t%.2f,%i\t%s\n',gazeCell{i,:}, fix_ok, stimulus_string);
+    % removed the end of line \n because is already in stimulus string
+    fprintf(fid,'%s\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%d\t%.2f\t%d\t%.2f\t%i\t%i\t%s',gazeCell{i,:}, fix_ok, stimulus_string);
 end
