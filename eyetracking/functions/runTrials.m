@@ -185,7 +185,7 @@ fclose(datFid); % close datFile
 fclose(eyeFid); 
 Screen('FillRect', scr.main,visual.bgColor);
 Screen(scr.main,'DrawText','Thanks! This session has finished.',100,100,visual.fgColor);
-Screen(scr.main,'DrawText',['You correctly identified the target that blinked ',num2str(sum(acc_session, 'omitnan')),' times, out of ',num2str(length(acc_session)),' trials.'],100,200,visual.fgColor);
+Screen(scr.main,'DrawText',['You correctly identified the target that blinked ',num2str(sum(acc_session, 'omitnan')),' times, out of ',num2str(sum(~isnan(acc_session))),' trials.'],100,200,visual.fgColor);
 Screen(scr.main,'DrawText','Press any key to exit.',100,300,visual.fgColor);
 Screen(scr.main,'Flip');
 WaitSecs(1);

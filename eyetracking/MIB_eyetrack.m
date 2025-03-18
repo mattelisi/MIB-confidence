@@ -14,6 +14,7 @@ const.gammaLinear = 0;      % use monitor linearization
 % collect data and, if duplicate, check before overwriting
 newFile = 0;
 
+
 while ~newFile
     [vpcode] = getVpCode;
 
@@ -74,7 +75,7 @@ session_info.prop_contrast_decrement = design.prop_contrast_decrement;
 session_info.session_n = ses_n;
 session_info.id =vpcode;
 session_info.acc =mean(acc_session, 'omitnan');
-session_info.N = length(acc_session);
+session_info.N = sum(~isnan(acc_session));
 save(sprintf('./%s/%s_info.mat',resdir,vpcode),'session_info');
 
 

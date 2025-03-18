@@ -22,7 +22,7 @@ design.off_dur = 1;
 % expressed in degrees of angle per frame
 design.speed_of_rotation = 1/3;
 
-% transition duration (in ms)
+% transition duration (in s)
 design.frame_dim_sec = 0.4;
 
 %% load info about previous session accuracy 

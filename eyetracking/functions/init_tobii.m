@@ -12,7 +12,7 @@ if isa(eyetracker,'EyeTracker')
     disp(['Address:',eyetracker.Address]);
     disp(['Name:',eyetracker.Name]);
     disp(['Serial Number:',eyetracker.SerialNumber]);
-    disp(['Model:',eyetracker.Model]);
+    disp(['Model:',eyetracker.Model]); 
     disp(['Firmware Version:',eyetracker.FirmwareVersion]);
     disp(['Runtime Version:',eyetracker.RuntimeVersion]);
 else

@@ -73,7 +73,7 @@ t0 =GetSecs;
 
 % parameters for fixation controls
 fix_ok = 1;
-n_consecutive = 6; %  100/(1/60*1000)
+n_consecutive = 12; %  100/(1/60*1000)
 fix_counter = 0;
 
 

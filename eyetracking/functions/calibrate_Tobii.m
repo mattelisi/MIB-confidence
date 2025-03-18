@@ -125,7 +125,7 @@ leftColor = [1 0 0]*255; % Red
 rightColor = [0 0 1]*255; % Bluesss
 
 % Calibration points
-shrink_factor = 0.0125;
+shrink_factor = 0.15;
 lb = 0.1 + shrink_factor;  % left bound
 xc = 0.5;  % horizontal center
 rb = 0.9 - shrink_factor;  % right bound
